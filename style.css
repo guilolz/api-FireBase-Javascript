@@ -1,0 +1,288 @@
+@keyframes pulse-container {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes slideIn {
+    0% { transform: translateY(-50px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    margin: 0;
+    padding: 0;
+}
+
+nav {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    padding: 10px 0;
+    animation: pulse-nav 3s infinite; 
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline-block;
+    margin: 0 10px; 
+}
+
+nav ul li a {
+    display: block;
+    padding: 15px 20px; 
+    color: white; 
+    text-decoration: none;
+    font-size: 18px;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+    animation: pulse-menu-item 3s infinite;
+}
+
+nav ul li a:hover {
+    background-color: rgba(0, 0, 0, 0.5); 
+}
+
+nav ul li a:active {
+    color: rgba(255, 255, 255, 0.5); 
+}
+
+#day-select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-left: 10px; 
+}
+
+.container {
+    width: 80%; 
+    max-width: 600px; 
+    margin: 20px auto;
+    white-space: nowrap; 
+    text-align: center; 
+    animation: pulse-container 2s infinite; 
+}
+
+.container h1 {
+    font-size: 3em;
+    color: rgb(250, 250, 250);
+    background-color: rgba(68, 58, 58, 0.445); 
+    padding: 20px; 
+    border-radius: 20px;
+    display: inline-block; 
+    animation: slideIn 1s ease-out; 
+}
+
+.input-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#new-task-input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#add-task-button {
+    padding: 10px;
+    background-color: #000000;
+    color: rgb(245, 10, 10);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+
+ul {
+    list-style-type: none;
+    padding: 0;
+    position: relative;
+}
+
+.task-container.dragging {
+    opacity: 0.5;
+    background-color: #e0e0e0;
+    z-index: 1000;
+    position: relative;
+}
+
+/* Adiciona um estilo para a área onde o item será solto */
+.task-container.placeholder {
+    border: 2px dashed #007bff; /* Adiciona uma borda pontilhada para destacar */
+    background-color: #f0f8ff; /* Cor de fundo ligeiramente diferente */
+}
+
+.task-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribui o espaço entre os itens */
+    margin-bottom: 10px;
+    padding: 5px; /* Adiciona um pouco de espaço interno */
+    border: 1px solid #ccc; /* Opcional: Adiciona uma borda para visualização */
+    border-radius: 4px; /* Opcional: Adiciona cantos arredondados */
+    background-color: #fff; /* Opcional: Fundo branco para melhor visualização */
+    position: relative; /* Necessário para o posicionamento absoluto do botão de remover */
+}
+
+.task-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.task-day {
+    background-color: #f8f9fa; /* Cor de fundo do dia da semana */
+    color: #007bff; /* Cor do texto do dia da semana */
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-left: 10px; /* Espaçamento entre o texto da tarefa e o dia da semana */
+    font-size: 0.9em;
+    white-space: nowrap; /* Impede quebra de linha no dia da semana */
+}
+
+.remove-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* Espaçamento entre o dia da semana e o botão de remover */
+}
+
+.remove-button:hover {
+    background-color: #c82333;
+}
+
+body.home {
+    background-image: url('https://images.unsplash.com/photo-1724232547374-69758574fff5?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover; /* Faz com que a imagem cubra toda a tela */
+    background-position: center; /* Centraliza a imagem */
+    background-repeat: no-repeat; /* Evita a repetição da imagem */
+    height: 100vh; /* Garante que o fundo cubra toda a altura da tela */
+    margin: 0;
+    padding: 0;
+}
+
+body.list{
+    background-image: url('https://images.unsplash.com/photo-1532012197267-da84d127e765?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+    background-size: cover; /* Faz com que a imagem cubra toda a tela */
+    background-position: center; /* Centraliza a imagem */
+    background-repeat: no-repeat; /* Evita a repetição da imagem */
+    height: 100vh; /* Garante que o fundo cubra toda a altura da tela */
+    margin: 0;
+    padding: 0;
+}
+.menu-item {
+    display: inline-block; /* Faz com que o link se comporte como um botão */
+    padding: 10px 20px; /* Espaçamento interno do botão */
+    color: white; /* Cor do texto */
+    text-decoration: none; /* Remove o sublinhado dos links */
+    font-size: 16px;
+    background: transparent; /* Fundo transparente */
+    border: none; /* Remove bordas */
+    border-radius: 0; /* Remove cantos arredondados */
+    transition: color 0.3s ease, text-shadow 0.3s ease; /* Animação suave para hover */
+}
+
+.menu-item:hover {
+    color: rgba(255, 255, 255, 0.7); /* Cor do texto ao passar o mouse */
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Adiciona sombra ao texto para melhorar a visibilidade */
+}
+
+.menu-item:active {
+    color: rgba(255, 255, 255, 0.5); /* Cor do texto ao clicar */
+}
+
+.complete-button {
+    background-color: #28a745; /* Verde para o botão de concluir */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 5px 10px;
+    transition: background-color 0.3s ease;
+    margin-left: 10px; /* Espaçamento entre o botão de remover e o botão de concluir */
+}
+
+.complete-button:hover {
+    background-color: #218838;
+}
+
+.task-container.completed {
+    background-color: #d4edda; /* Cor de fundo para tarefas concluídas */
+    text-decoration: line-through; /* Riscar o texto das tarefas concluídas */
+}
+
+
+.comments-container {
+    margin-top: 20px;
+}
+
+.comments-section {
+    margin-top: 10px;
+}
+
+.comment-input {
+    width: 80%;
+    padding: 5px;
+    margin-right: 10px;
+}
+
+.add-comment-button {
+    padding: 5px 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-comment-button:hover {
+    background-color: #0056b3;
+}
+
+.comments-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.comments-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+.remove-comment-button {
+    margin-left: auto;
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 40px;
+    cursor: pointer;
+    padding: 3px 6px;
+}
+
+.remove-comment-button:hover {
+    background-color: #c82333;
+}
+

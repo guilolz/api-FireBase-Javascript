@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="list">
+    <nav>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="list.html">Tarefas</a></li>
+        </ul>
+    </nav>
+
+    
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="input-container">
+            <input type="text" id="new-task-input" placeholder="Adicione uma nova tarefa">
+            <select id="day-select">
+                <option value="seg">Segunda-feira</option>
+                <option value="ter">Terça-feira</option>
+                <option value="qua">Quarta-feira</option>
+                <option value="qui">Quinta-feira</option>
+                <option value="sex">Sexta-feira</option>
+                <option value="sab">Sábado</option>
+                <option value="dom">Domingo</option>
+            </select>
+            <button id="add-task-button">Adicionar</button>
+        </div>
+        <ul id="task-list">
+       
+        </ul>
+    </div>
+
+   
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase, ref, set, remove, onValue, update } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+        
+   
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaOk21O4dMt-rXdPE5ZX1_4H-Kx__CXWA",
+            authDomain: "teste004-38fcd.firebaseapp.com",
+            projectId: "teste004-38fcd",
+            storageBucket: "teste004-38fcd.appspot.com",
+            messagingSenderId: "449450082131",
+            appId: "1:449450082131:web:6acd4b814e9d43e9766ba6",
+            measurementId: "G-KER42JWJSR",
+            databaseURL: "https://teste004-38fcd-default-rtdb.firebaseio.com"
+        };
+        
+     
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+    
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskInput = document.getElementById('new-task-input');
+            const addTaskButton = document.getElementById('add-task-button');
+            const taskList = document.getElementById('task-list');
+            const daySelect = document.getElementById('day-select');
+
+            let draggedItem = null;
+
+            function addTask() {
+                const taskText = taskInput.value.trim();
+                const selectedDay = daySelect.value;
+                const dayMap = {
+                    'seg': 'Segunda-feira',
+                    'ter': 'Terça-feira',
+                    'qua': 'Quarta-feira',
+                    'qui': 'Quinta-feira',
+                    'sex': 'Sexta-feira',
+                    'sab': 'Sábado',
+                    'dom': 'Domingo'
+                };
+
+                if (taskText !== '') {
+                    const taskId = Date.now(); 
+                    set(ref(database, 'tasks/' + taskId), {
+                        text: taskText,
+                        day: dayMap[selectedDay] || 'Dia inválido',
+                        completed: false 
+                    }).then(() => {
+                        taskInput.value = ''; 
+                    }).catch((error) => {
+                        console.error('Error adding task:', error);
+                    });
+                } else {
+                    console.log('O campo de entrada está vazio.');
+                }
+            }
+
+            function removeTask(taskId) {
+                remove(ref(database, 'tasks/' + taskId));
+            }
+
+            function markAsCompleted(taskId) {
+                update(ref(database, 'tasks/' + taskId), { completed: true });
+            }
+
+            function addComment(taskId, commentText) {
+                const commentId = Date.now();
+                set(ref(database, 'tasks/' + taskId + '/comments/' + commentId), commentText)
+                    .catch((error) => {
+                        console.error('Error adding comment:', error);
+                    });
+            }
+
+            function removeComment(taskId, commentId) {
+                remove(ref(database, 'tasks/' + taskId + '/comments/' + commentId));
+            }
+
+            function loadComments(taskId, commentsListElement) {
+                const commentsRef = ref(database, 'tasks/' + taskId + '/comments');
+                onValue(commentsRef, (snapshot) => {
+                    const data = snapshot.val();
+                    commentsListElement.innerHTML = ''; // Limpa a lista de comentários
+                    if (data) {
+                        Object.keys(data).forEach(commentId => {
+                            const commentText = data[commentId];
+                            const li = document.createElement('li');
+                            li.textContent = commentText;
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'Remover';
+                            deleteButton.classList.add('remove-comment-button');
+                            deleteButton.addEventListener('click', () => {
+                                removeComment(taskId, commentId);
+                            });
+
+                            li.appendChild(deleteButton);
+                            commentsListElement.appendChild(li);
+                        });
+                    }
+                }, (error) => {
+                    console.error('Error loading comments:', error);
+                });
+            }
+
+            function loadTasks() {
+                const tasksRef = ref(database, 'tasks');
+                onValue(tasksRef, (snapshot) => {
+                    const data = snapshot.val();
+                    taskList.innerHTML = ''; 
+                    if (data) {
+                        Object.keys(data).forEach(taskId => {
+                            const task = data[taskId];
+                            const li = document.createElement('li');
+                            li.classList.add('task-container');
+                            li.setAttribute('draggable', 'true');
+                            li.dataset.id = taskId;
+
+                            const taskContent = document.createElement('span');
+                            taskContent.classList.add('task-content');
+                            taskContent.textContent = task.text;
+
+                            const taskDay = document.createElement('span');
+                            taskDay.classList.add('task-day');
+                            taskDay.textContent = task.day;
+
+                            const deleteButton = document.createElement('button');
+                            deleteButton.textContent = 'Remover';
+                            deleteButton.classList.add('remove-button');
+                            deleteButton.addEventListener('click', () => {
+                                removeTask(taskId);
+                            });
+
+                            const completeButton = document.createElement('button');
+                            completeButton.textContent = task.completed ? 'Concluída' : 'Concluir';
+                            completeButton.classList.add('complete-button');
+                            completeButton.addEventListener('click', () => {
+                                if (!task.completed) {
+                                    markAsCompleted(taskId);
+                                }
+                            });
+
+                            const commentsSection = document.createElement('div');
+                            commentsSection.classList.add('comments-section');
+
+                            const commentInput = document.createElement('input');
+                            commentInput.classList.add('comment-input');
+                            commentInput.placeholder = 'Adicionar um comentário';
+
+                            const addCommentButton = document.createElement('button');
+                            addCommentButton.classList.add('add-comment-button');
+                            addCommentButton.textContent = 'Adicionar Comentário';
+                            addCommentButton.addEventListener('click', () => {
+                                addComment(taskId, commentInput.value.trim());
+                                commentInput.value = ''; 
+                            });
+
+                            const commentsList = document.createElement('ul');
+                            commentsList.classList.add('comments-list');
+
+                            commentsSection.appendChild(commentInput);
+                            commentsSection.appendChild(addCommentButton);
+                            commentsSection.appendChild(commentsList);
+
+                            li.appendChild(taskContent);
+                            li.appendChild(taskDay);
+                            li.appendChild(deleteButton);
+                            li.appendChild(completeButton);
+                            li.appendChild(commentsSection);
+
+                            taskList.appendChild(li);
+
+                            // Carregar comentários
+                            loadComments(taskId, commentsList);
+                        });
+                    }
+                }, (error) => {
+                    console.error('Error loading tasks:', error);
+                });
+            }
+
+            addTaskButton.addEventListener('click', addTask);
+
+            taskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addTask();
+                }
+            });
+
+            taskList.addEventListener('dragstart', (e) => {
+                if (e.target && e.target.classList.contains('task-container')) {
+                    draggedItem = e.target;
+                    draggedItem.classList.add('dragging');
+                }
+            });
+
+            taskList.addEventListener('dragend', (e) => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem = null;
+
+                    const placeholders = document.querySelectorAll('.placeholder');
+                    placeholders.forEach(placeholder => placeholder.classList.remove('placeholder'));
+                }
+            });
+
+            taskList.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                const afterElement = getDragAfterElement(taskList, e.clientY);
+                if (afterElement == null) {
+                    taskList.appendChild(draggedItem);
+                } else {
+                    taskList.insertBefore(draggedItem, afterElement);
+                }
+            });
+
+            function getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.task-container:not(.dragging)')];
+
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            loadTasks();
+        });
+    </script>
+</body>
+</html>

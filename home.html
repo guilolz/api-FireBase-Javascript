@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="home">
+    <nav>
+        <ul>
+            <li><a href="home.html">Home</a></li>
+            <li><a href="list.html">Tarefas</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h1>Escolha sua opção no menu</h1>
+    </div>
+
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/10.13.0/firebase-database.js";
+        
+    
+        const firebaseConfig = {
+            apiKey: "AIzaSyBaOk21O4dMt-rXdPE5ZX1_4H-Kx__CXWA",
+            authDomain: "teste004-38fcd.firebaseapp.com",
+            projectId: "teste004-38fcd",
+            storageBucket: "teste004-38fcd.appspot.com",
+            messagingSenderId: "449450082131",
+            appId: "1:449450082131:web:6acd4b814e9d43e9766ba6",
+            measurementId: "G-KER42JWJSR",
+            databaseURL: "https://teste004-38fcd-default-rtdb.firebaseio.com"
+        };
+        
+    
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+    </script>
+
+
+    <script type="module" src="script.js"></script>
+</body>
+</html>
